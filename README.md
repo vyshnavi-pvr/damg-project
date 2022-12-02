@@ -1,5 +1,4 @@
-# DAMG Project:  Citibike Machine Learning Project with Snowpark Python and Streamlit( deployed on Amazon Sagemaker Studio Lab)
-
+# DAMG Project:  Credit Card Fraud Detection
 
 ### DAMG 7245 - Big Data and Intelligent Analytics 
 ### Fall Semester 2022
