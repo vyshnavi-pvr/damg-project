@@ -189,9 +189,9 @@ def predict(data : creditCardFraudDetection,current_user: User = Depends(get_cur
 
     predictions = model.predict(features)
     if predictions == 1:
-        return {"fraudulent"}
+        return {"predictions":"fraudulent"}
     elif predictions == 0:
-        return {"not fraudulent"}
+        return {"predictions":"not fraudulent"}
 
 # uvicorn model-as-a-service:app --reload
 

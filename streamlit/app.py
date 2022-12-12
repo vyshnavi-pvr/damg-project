@@ -25,9 +25,27 @@ if choice == "Home Page":
 	username = st.text_input("Username")
 	password = st.text_input("password")
 
-	value = st.text_input("Enter the quartile of an image: ")		
+	
+	
+	dfromh=st.text_input("Distance from home")	
+	dfromlt=st.text_input("Distance from last transaction")
+	rmpp=st.text_input("ratio_to_median_purchase_price")
+	rr=st.text_input("repeat_retailer")
+	uc=st.text_input("used_chip")
+	upn=st.text_input("used_pin_number")
+	oo=st.text_input("online_order")
+	
 
-	value = st.text_input("Prediction")		
+
+	creditCardData= {
+  "distance_from_home": dfromh,
+  "distance_from_last_transaction": dfromlt,
+  "ratio_to_median_purchase_price": rmpp,
+  "repeat_retailer": rr,
+  "used_chip": uc,
+  "used_pin_number": upn,
+  "online_order": oo
+}
 
 	if st.button("Submit"):
 		headers = {'accept': 'application/json',}
@@ -37,11 +55,14 @@ if choice == "Home Page":
 		dict_response = ast.literal_eval(string_response)
 		auth_token = dict_response['access_token']		
 		headers = {'accept': 'application/json','Authorization': 'Bearer {access_token}'.format(access_token=auth_token),}		
-		response_model = requests.get('http://127.0.0.1:8000/users/me/predict/{predict_value}'.format(predict_value=value), headers=headers)
+
+
+		# response_model = requests.get('http://127.0.0.1:8000/users/me/predict/{predict_value}'.format(predict_value=value), headers=headers)
+		response_model = requests.post('http://127.0.0.1:8000/predict', json=creditCardData, headers=headers)
 		string_rm = response_model.content.decode("utf-8")
 		dict_rm = ast.literal_eval(string_rm)
 		print(dict_rm['predictions'])
-		st.title(dict_rm['predictions'])
+		st.success(dict_rm['predictions'])
 
 		
 		
