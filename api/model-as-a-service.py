@@ -27,14 +27,14 @@ fake_users_db = {
         "full_name": "Moksha Doshi",
         "email": "md@gmail.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
+        "disabled": True,
     },
     "vyshnavi": {
         "username": "vyshnavi",
         "full_name": "Vyshnavi Pendru",
         "email": "vp@gmail.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": True,
+        "disabled": False,
     },
 }
 
@@ -169,10 +169,20 @@ Credit Card Fraud Detection API
   """
   return note
 
+# write to an in-memory BytesIO object, which acts like a file but doesn't actually touch a disk
+from io import BytesIO
+import boto3
+import pickle
+
+s3 = boto3.resource('s3')
+with BytesIO() as data:
+    s3.Bucket("damg-model").download_fileobj("pickle_model.pkl", data)
+    data.seek(0)    # move back to the beginning after writing
+    model = pickle.load(data)
 
 @app.post('/predict')
 def predict(data : creditCardFraudDetection,current_user: User = Depends(get_current_user)):
-    model = joblib.load('model.pkl')                                                                                                                                                                                                                          
+    # model = joblib.load('model.pkl')                                                                                                                                                                                                                          
     features = np.array([[data.distance_from_home, data.distance_from_last_transaction, data.ratio_to_median_purchase_price, data.repeat_retailer, 
                 data.used_chip, data.used_pin_number, data.online_order]])
     
