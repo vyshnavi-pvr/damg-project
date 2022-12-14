@@ -18,4 +18,5 @@ Google Codelabs - [https://codelabs-preview.appspot.com/?file_id=1qNgCSdMase7BZ0
 
 
 Storing data in AWS S3 bucket and retrieving it, Docker , FastAPI - Vyshnavi Pendru
-Data Science, EDA, Modeling & Analysis, Model-as-a-service in FastAPI, Analysis & Model in Streamlit - Moksha Doshi
+
+Validation of data using Great Expectations, Data Science, EDA, Modeling & Analysis, Model-as-a-service in FastAPI, Analysis & Model in Streamlit - Moksha Doshi
