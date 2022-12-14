@@ -12,6 +12,14 @@ ADD ./api /opt/api
 RUN pip install --upgrade pip
 RUN pip install -r /opt/api/requirements.txt
 
+#add credentials
+RUN mkdir -p /home/ml-api-user/.aws
+COPY api/.aws/credentials /home/ml-api-user/.aws/
+COPY api/.aws/config /home/ml-api-user/.aws/
+
+RUN ls -lrt /home/ml-api-user/.aws/credentials
+RUN chmod 644 /home/ml-api-user/.aws/credentials
+
 RUN chmod +x /opt/api/run.sh
 RUN chown -R ml-api-user:ml-api-user ./
 
