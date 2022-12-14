@@ -175,24 +175,89 @@ import boto3
 import pickle
 
 s3 = boto3.resource('s3')
+#Logistic Regression Model API
 with BytesIO() as data:
-    s3.Bucket("damg-model").download_fileobj("pickle_model.pkl", data)
+    s3.Bucket("damg-model").download_fileobj("logisticregression.pkl", data)
     data.seek(0)    # move back to the beginning after writing
-    model = pickle.load(data)
+    logreg = pickle.load(data)
 
-@app.post('/predict')
+@app.post('/predict/logistic_reg')
 def predict(data : creditCardFraudDetection,current_user: User = Depends(get_current_user)):
     # model = joblib.load('model.pkl')                                                                                                                                                                                                                          
     features = np.array([[data.distance_from_home, data.distance_from_last_transaction, data.ratio_to_median_purchase_price, data.repeat_retailer, 
                 data.used_chip, data.used_pin_number, data.online_order]])
     
 
-    predictions = model.predict(features)
+    predictions = logreg.predict(features)
     if predictions == 1:
-        return {"predictions":"fraudulent"}
+        return {"predictions":"Fraudulent"}
     elif predictions == 0:
-        return {"predictions":"not fraudulent"}
+        return {"predictions":"Not Fraudulent"}
+
+
+
+#Decision Tree Model API
+with BytesIO() as data:
+    s3.Bucket("damg-model").download_fileobj("decisiontree.pkl", data)
+    data.seek(0)    # move back to the beginning after writing
+    clf = pickle.load(data)
+
+@app.post('/predict/decision_tree')
+def predict(data : creditCardFraudDetection,current_user: User = Depends(get_current_user)):
+    # model = joblib.load('model.pkl')                                                                                                                                                                                                                          
+    features = np.array([[data.distance_from_home, data.distance_from_last_transaction, data.ratio_to_median_purchase_price, data.repeat_retailer, 
+                data.used_chip, data.used_pin_number, data.online_order]])
+    
+
+    predictions = clf.predict(features)
+    if predictions == 1:
+        return {"predictions":"Fraudulent"}
+    elif predictions == 0:
+        return {"predictions":"Not Fraudulent"}
+
+
+#KNN Model API
+with BytesIO() as data:
+    s3.Bucket("damg-model").download_fileobj("knn.pkl", data)
+    data.seek(0)    # move back to the beginning after writing
+    knn = pickle.load(data)
+
+@app.post('/predict/knn')
+def predict(data : creditCardFraudDetection,current_user: User = Depends(get_current_user)):
+    # model = joblib.load('model.pkl')                                                                                                                                                                                                                          
+    features = np.array([[data.distance_from_home, data.distance_from_last_transaction, data.ratio_to_median_purchase_price, data.repeat_retailer, 
+                data.used_chip, data.used_pin_number, data.online_order]])
+    
+
+    predictions = knn.predict(features)
+    if predictions == 1:
+        return {"predictions":"Fraudulent"}
+    elif predictions == 0:
+        return {"predictions":"Not Fraudulent"}
+
+
+#Random Forest Model API
+with BytesIO() as data:
+    s3.Bucket("damg-model").download_fileobj("randomforest.pkl", data)
+    data.seek(0)    # move back to the beginning after writing
+    rf = pickle.load(data)
+
+@app.post('/predict/random_forest')
+def predict(data : creditCardFraudDetection,current_user: User = Depends(get_current_user)):
+    # model = joblib.load('model.pkl')                                                                                                                                                                                                                          
+    features = np.array([[data.distance_from_home, data.distance_from_last_transaction, data.ratio_to_median_purchase_price, data.repeat_retailer, 
+                data.used_chip, data.used_pin_number, data.online_order]])
+    
+
+    predictions = rf.predict(features)
+    if predictions == 1:
+        return {"predictions":"Fraudulent"}
+    elif predictions == 0:
+        return {"predictions":"Not Fraudulent"}
 
 # uvicorn model-as-a-service:app --reload
 
 # run using - http://127.0.0.1:8000
+
+# if __name__ == '__main__':
+#     uvicorn.run(app, host='127.0.0.1', port=8000)
