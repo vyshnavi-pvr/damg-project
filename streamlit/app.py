@@ -32,12 +32,30 @@ with st.sidebar:
 if choice == "Home Page":
     st.title("Basic training of a simple ML Regression model using a single feature/predictor/input")
     
+	headers = {'accept': 'application/json',}
+		data = {'grant_type': '','username': '{user_val}'.format(user_val=username),'password': '{pass_val}'.format(pass_val=password),'scope': '','client_id': '' ,'client_secret': '',}
+		response = requests.post('http://127.0.0.1:8000/token', headers=headers, data=data)
+		string_response = response.content.decode("utf-8") 
+		dict_response = ast.literal_eval(string_response)
+		auth_token = dict_response['access_token']	
+
+		json_response = response.json()
+		
+		st.session_state['access_token'] = json_response["access_token"]
+		st.session_state['token_type'] = json_response["token_type"]
+
+		headers = {'accept': 'application/json','Authorization': 'Bearer {access_token}'.format(access_token=auth_token),}	
+			
+		st.success("Loggedin")
+		
     html_temp = """
     <div style="background-color:tomato;padding:10px">
     <h2 style="color:white;text-align:center;">Streamlit Model as a Service ML App </h2>
     </div>
     """
     st.markdown(html_temp,unsafe_allow_html=True)
+	
+	
 
     if st.button("About"):
         st.text("Lets Learn")
