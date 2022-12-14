@@ -17,8 +17,6 @@ with st.sidebar:
 
 
 if choice == "Prediction Page":
-	
-	
 
 	dfromh=st.text_input("Distance from home")	
 	dfromlt=st.text_input("Distance from last transaction")
