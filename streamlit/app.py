@@ -2,13 +2,7 @@ import streamlit as st
 import requests
 import ast
 
-
-# interact with FastAPI endpoint
-
-
-import streamlit as st 
-import requests
-import ast
+from streamlit.web.server.websocket_headers import _get_websocket_headers
 
 
 # interact with FastAPI endpoint
@@ -27,25 +21,11 @@ if choice == "Home Page":
 
 	
 
-	dfromh=st.text_input("Distance from home")	
-	dfromlt=st.text_input("Distance from last transaction")
-	rmpp=st.text_input("ratio_to_median_purchase_price")
-	rr=st.text_input("repeat_retailer")
-	uc=st.text_input("used_chip")
-	upn=st.text_input("used_pin_number")
-	oo=st.text_input("online_order")
+
 	
 
 
-	creditCardData= {
-  "distance_from_home": dfromh,
-  "distance_from_last_transaction": dfromlt,
-  "ratio_to_median_purchase_price": rmpp,
-  "repeat_retailer": rr,
-  "used_chip": uc,
-  "used_pin_number": upn,
-  "online_order": oo
-}
+	
 
 	if st.button("Submit"):
 		headers = {'accept': 'application/json',}
@@ -53,8 +33,15 @@ if choice == "Home Page":
 		response = requests.post('http://127.0.0.1:8000/token', headers=headers, data=data)
 		string_response = response.content.decode("utf-8") 
 		dict_response = ast.literal_eval(string_response)
-		auth_token = dict_response['access_token']		
-		headers = {'accept': 'application/json','Authorization': 'Bearer {access_token}'.format(access_token=auth_token),}		
+		auth_token = dict_response['access_token']	
+
+		json_response = response.json()
+		
+		st.session_state['access_token'] = json_response["access_token"]
+		st.session_state['token_type'] = json_response["token_type"]
+
+		headers = {'accept': 'application/json','Authorization': 'Bearer {access_token}'.format(access_token=auth_token),}	
+		print(auth_token)	
 
 
 		# response_model = requests.get('http://127.0.0.1:8000/users/me/predict/{predict_value}'.format(predict_value=value), headers=headers)
@@ -66,51 +53,56 @@ if choice == "Home Page":
 
 		
 		
-def predict_flashes(pixels):
-    inputs = pixels.split(',')
-    y_values= array([inputs]).reshape(-1,1)
-    prediction = reg_model.predict(y_values)
-    print(prediction)
-    return list(prediction)
+# def predict_flashes(pixels):
+#     inputs = pixels.split(',')
+#     y_values= array([inputs]).reshape(-1,1)
+#     prediction = reg_model.predict(y_values)
+#     print(prediction)
+#     return list(prediction)
 
 
-if choice == "Profiling Any Dataset": 
-	dfromh=st.text_input("Distance from home")	
-	dfromlt=st.text_input("Distance from last transaction")
-	rmpp=st.text_input("ratio_to_median_purchase_price")
-	rr=st.text_input("repeat_retailer")
-	uc=st.text_input("used_chip")
-	upn=st.text_input("used_pin_number")
-	oo=st.text_input("online_order")
+# if choice == "Profiling Any Dataset": 
+# 	dfromh=st.text_input("Distance from home")	
+# 	dfromlt=st.text_input("Distance from last transaction")
+# 	rmpp=st.text_input("ratio_to_median_purchase_price")
+# 	rr=st.text_input("repeat_retailer")
+# 	uc=st.text_input("used_chip")
+# 	upn=st.text_input("used_pin_number")
+# 	oo=st.text_input("online_order")
 	
 
 
-	creditCardData= {
-  "distance_from_home": dfromh,
-  "distance_from_last_transaction": dfromlt,
-  "ratio_to_median_purchase_price": rmpp,
-  "repeat_retailer": rr,
-  "used_chip": uc,
-  "used_pin_number": upn,
-  "online_order": oo
-}
+# 	creditCardData= {
+#   "distance_from_home": dfromh,
+#   "distance_from_last_transaction": dfromlt,
+#   "ratio_to_median_purchase_price": rmpp,
+#   "repeat_retailer": rr,
+#   "used_chip": uc,
+#   "used_pin_number": upn,
+#   "online_order": oo
+# }
 
-	if st.button("Submit"):
-		headers = {'accept': 'application/json',}
-		data = {'grant_type': '','username': '{user_val}'.format(user_val=username),'password': '{pass_val}'.format(pass_val=password),'scope': '','client_id': '' ,'client_secret': '',}
-		response = requests.post('http://127.0.0.1:8000/token', headers=headers, data=data)
-		string_response = response.content.decode("utf-8") 
-		dict_response = ast.literal_eval(string_response)
-		auth_token = dict_response['access_token']		
-		headers = {'accept': 'application/json','Authorization': 'Bearer {access_token}'.format(access_token=auth_token),}		
+	# if st.button("Submit"):
+	# 	headers = {'accept': 'application/json',}
+	# 	data = {'grant_type': '','username': '{user_val}'.format(user_val=username),'password': '{pass_val}'.format(pass_val=password),'scope': '','client_id': '' ,'client_secret': '',}
+	# 	response = requests.post('http://127.0.0.1:8000/token', headers=headers, data=data)
+	# 	string_response = response.content.decode("utf-8") 
+	# 	dict_response = ast.literal_eval(string_response)
+	# 	auth_token = dict_response['access_token']	
+	# 	print("Checking auth token")
+	# 	print(auth_token)
+	# 	headers = {'accept': 'application/json','Authorization': 'Bearer {access_token}'.format(access_token=auth_token),}		
 
 
 		# response_model = requests.get('http://127.0.0.1:8000/users/me/predict/{predict_value}'.format(predict_value=value), headers=headers)
-		response_model = requests.post('http://127.0.0.1:8000/predict', json=creditCardData, headers=headers)
-		string_rm = response_model.content.decode("utf-8")
-		dict_rm = ast.literal_eval(string_rm)
-		print(dict_rm['predictions'])
-		st.success(dict_rm['predictions'])
+		# response_model = requests.post('http://127.0.0.1:8000/predict', json=creditCardData, headers=headers)
+		# string_rm = response_model.content.decode("utf-8")
+
+		# dict_rm = ast.literal_eval(string_rm)
+		# print(dict_rm['predictions'])
+		# print("Testing auth token")
+		# st.success(dict_rm['predictions'])
+
 
  
 
