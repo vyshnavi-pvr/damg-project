@@ -49,7 +49,7 @@ if st.button("Submit"):
     }
         print(headers,"Printed headers")   
         # response_model = requests.get('http://127.0.0.1:8000/users/me/predict/{predict_value}'.format(predict_value=value), headers=headers)
-        response_model = requests.post('http://127.0.0.1:8000/predict', json=creditCardData, headers=headers)
+        response_model = requests.post('http://127.0.0.1:8000/predict/random_forest', json=creditCardData, headers=headers)
         string_rm = response_model.content.decode("utf-8")
         print("Printing response tree",string_rm)
         dict_rm = ast.literal_eval(string_rm)
