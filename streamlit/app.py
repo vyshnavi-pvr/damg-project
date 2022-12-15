@@ -3,7 +3,19 @@ import requests
 import ast
 import pandas as pd
 import pandas_profiling
+import seaborn as sns
+import time
+import matplotlib.pyplot as plt
 from streamlit_pandas_profiling import st_profile_report
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import precision_recall_fscore_support as score, mean_squared_error
+from sklearn.metrics import confusion_matrix,accuracy_score
+from sklearn.decomposition import PCA
+
 
 
 # interact with FastAPI endpoint
@@ -13,15 +25,11 @@ import streamlit as st
 import requests
 import ast
 
+start_time=time.time()
+tit1,tit2 = st.columns((4, 1))
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
-# interact with FastAPI endpoint
 
-
-# with st.sidebar: 
-#     # st.image("https://www.onepointltd.com/wp-content/uploads/2020/03/inno2.png")
-#     st.title("UI interface for Model as a service")
-#     choice = st.radio("Navigation", ["Home Page"])
-#     st.info("This project application helps you build and explore your data.")
 with st.sidebar: 
     st.image("https://www.onepointltd.com/wp-content/uploads/2020/03/inno2.png")
     st.title("UI interface for Model as a service")
@@ -120,69 +128,12 @@ if choice == "Profiling Any Dataset":
     profile_df = df.profile_report()
     st_profile_report(profile_df)
 
-###########################################################################################################
-#Functions to perform in app!!
-# def get_dataset(dataset_name):
-# 	if dataset_name=="Heart Attack":
-# 		bucket = "damg-project"
-# 		file_name = "card_transdata.csv"
 
-
-# 		s3 = boto3.client('s3') 
-# 	# 's3' is a key word. create connection to S3 using default config and all buckets within S3
-
-# 		obj = s3.get_object(Bucket= bucket, Key= file_name) 
-# 	# get object and file (key) from bucket
-
-# 		data = pd.read_csv(obj['Body'])
-# 		st.write('Shape of the dataframe: ',initial_df.shape)
-
-# 		#data=pd.read_csv("https://raw.githubusercontent.com/advikmaniar/ML-Healthcare-Web-App/main/Data/heart.csv")
-# 		st.header("Fraud Prediction")
-# 		return data
-
-# 	else:
-# 		#data=pd.read_csv("https://raw.githubusercontent.com/advikmaniar/ML-Healthcare-Web-App/main/Data/BreastCancer.csv")
-			
-# 		#data["diagnosis"] = LE.fit_transform(data["diagnosis"])
-# 		data.replace([np.inf, -np.inf], np.nan, inplace=True)
-# 		data["diagnosis"] = pd.to_numeric(data["diagnosis"], errors="coerce")
-# 		st.header("Breast Cancer Prediction")
-# 		return data
-
-# data = get_dataset(dataset_name)
-
-
-
-###########################################################################################################
 
 if choice == "Try Different Models": 
 
-	#dataset_name = st.selectbox("Select Dataset: ",('Heart Attack',"Breast Cancer"))
 	classifier_name = st.selectbox("Select Classifier: ",("Logistic Regression","KNN", "Decision Trees", "Random Forest"))
 
-	# def get_dataset(dataset_name):
-	# 	if dataset_name=="Heart Attack":
-	# 		bucket = "damg-project"
-	# 		file_name = "card_transdata.csv"
-
-	# 		import boto3
-	# 		s3 = boto3.client('s3') 
-	# 	# 's3' is a key word. create connection to S3 using default config and all buckets within S3
-	# 		obj = s3.get_object(Bucket= bucket, Key= file_name) 
-	# 	# get object and file (key) from bucket
-	# 		data = pd.read_csv(obj['Body'])
-	# 		st.write('Shape of the dataframe: ',data.shape)
-
-	# 	#data=pd.read_csv("https://raw.githubusercontent.com/advikmaniar/ML-Healthcare-Web-App/main/Data/heart.csv")
-	# 		st.header("Fraud Prediction")
-	# 		return data
-
-	# 	else:
-	# 		pass
-
-	# data = get_dataset(dataset_name)
-#Getting data from s3
 	import boto3
 	bucket = "damg-project"
 	file_name = "card_transdata.csv"
@@ -203,8 +154,58 @@ if choice == "Try Different Models":
 	non_fraud_over_df = pd.DataFrame(non_fraud_over, columns=["distance_from_home", "distance_from_last_transaction",
        "ratio_to_median_purchase_price", "repeat_retailer", "used_chip",
        "used_pin_number", "online_order"])
-	st.write('Data: ',non_fraud_over_df.head())
+	#st.write('Data: ',non_fraud_over_df.head())
+
+	non_fraud_over_df["fraud"] = fraud_over
+	df3 = non_fraud_over_df
+	st.write('Data: ',df3.head())
+
+	feature_columns = ["distance_from_home", "distance_from_last_transaction",
+		"ratio_to_median_purchase_price", "repeat_retailer", "used_chip", "used_pin_number", "online_order"]
+	X = df3[feature_columns]
+	y = df3.fraud
+
+
+	#select classifier 
+	def add_parameter_ui(clf_name):
+		params={}
+		st.write("Select values: ")
+
+		if clf_name == "Logistic Regression":
+			R = st.slider("Regularization",0.1,10.0,step=0.1)
+			MI = st.slider("max_iter",50,400,step=50)
+			params["R"] = R
+			params["MI"] = MI
+
+		elif clf_name == "KNN":
+			K = st.slider("n_neighbors",1,20)
+			params["K"] = K
+
+		elif clf_name == "Decision Trees":
+			M = st.slider("max_depth", 2, 20)
+			C = st.selectbox("Criterion", ("gini", "entropy"))
+			SS = st.slider("min_samples_split",1,10)
+			params["M"] = M
+			params["C"] = C
+			params["SS"] = SS
+
+		elif clf_name == "Random Forest":
+			N = st.slider("n_estimators",50,500,step=50,value=100)
+			M = st.slider("max_depth",2,20)
+			C = st.selectbox("Criterion",("gini","entropy"))
+			params["N"] = N
+			params["M"] = M
+			params["C"] = C
+
+		RS = st.sidebar.slider("Random State",0,100)
+		params["RS"] = RS
+
+		return params	
+
+	params = add_parameter_ui(classifier_name)
+
 	
+
 
 
 
