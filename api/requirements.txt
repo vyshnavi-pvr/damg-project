@@ -9,14 +9,18 @@ numpy==1.19.5
 pandas==1.2.5
 scipy==1.6.2
 matplotlib==3.6.2
-scikit_learn==0.22.1
+##scikit_learn==0.22.1
+scikit-learn==1.0.2
 xarray==0.20.1
 Cython==0.29.32
+
 
 
 boto==2.49.0
 boto3==1.24.28
 botocore==1.27.28
+
+bcrypt
 
 awscli
 python-jose==3.3.0

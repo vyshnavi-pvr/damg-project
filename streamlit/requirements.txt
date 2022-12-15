@@ -1,5 +1,5 @@
-streamlit>=1.12.0, <1.13.0
-
+##streamlit>=1.12.0, <1.13.0
+streamlit==1.14.0
 uvicorn>=0.18.2, <0.19.0
 fastapi>=0.79.0, <1.0.0
 python-multipart>=0.0.5, <0.1.0
@@ -14,3 +14,7 @@ matplotlib==3.6.2
 scikit_learn==0.22.1
 xarray==0.20.1
 Cython==0.29.32
+streamlit-pandas-profiling
+imbalanced-learn
+websocket-client==1.4.1
+websockets==10.3
