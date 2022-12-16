@@ -15,13 +15,25 @@ with st.sidebar:
     st.title("Analysis of data")
     st.info("This page can help you check all kinds of statistics and analysis in the given dataset")
 
+def statisticspage():
+    st.title("Exploratory Data Analysis")
+    st.title("Upload Your Dataset")
+    file = st.file_uploader("Upload Your Dataset")
+    if st.button("Submit"):
+        if file: 
+            df = pd.read_csv(file, index_col=None)
+            st.dataframe(df)
+        profile_df = df.profile_report()
+        st_profile_report(profile_df)
 
-st.title("Exploratory Data Analysis")
-st.title("Upload Your Dataset")
-file = st.file_uploader("Upload Your Dataset")
-if st.button("Submit"):
-    if file: 
-        df = pd.read_csv(file, index_col=None)
-        st.dataframe(df)
-    profile_df = df.profile_report()
-    st_profile_report(profile_df)
+
+# try:
+#     if st.session_state['access_token']!='':
+#         statisticspage()
+try:
+    if st.session_state['loggedin']=='True': statisticspage()
+    else: st.error("Please Login in Main Page")
+
+except KeyError:
+    st.error("Please Login in Main Page")
+    
