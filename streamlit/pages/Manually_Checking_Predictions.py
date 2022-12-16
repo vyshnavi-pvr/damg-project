@@ -41,21 +41,17 @@ def predictions():
 
         try:
 
-            # print(st.session_state['access_token'])
-            
             access_token=st.session_state['access_token']
             headers = {
             "Content-Type": "application/json;charset=UTF-8",
             "Authorization": f"Bearer {access_token}",
         }
-
         except KeyError:
             st.error("Please Login with your username and password")
-            # print(headers,"Printed headers")   
-            # response_model = requests.post('http://api:8001/predict/random_forest', json=creditCardData, headers=headers)
-        response_model = requests.post('http://127.0.0.1:8000/predict/random_forest', json=creditCardData, headers=headers)
+
+        response_model = requests.post('http://api:8001/predict/random_forest', json=creditCardData, headers=headers)
+        # response_model = requests.post('http://127.0.0.1:8000/predict/random_forest', json=creditCardData, headers=headers)
         string_rm = response_model.content.decode("utf-8")
-        # print("Printing response tree",string_rm)
         dict_rm = ast.literal_eval(string_rm)
         # print(dict_rm['predictions'])
         try:
@@ -65,8 +61,7 @@ def predictions():
                 st.success(dict_rm['predictions'])
 
         except KeyError:
-            st.error("Enter all the transaction details ")
-            # print("response model",response_model)
+            st.error("Please enter all the valid transaction details ")
 
 try:
     if st.session_state['loggedin']=='True': predictions()

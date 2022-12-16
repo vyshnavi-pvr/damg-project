@@ -1,9 +1,8 @@
-import json
-from pathlib import Path
+# import json
+# from pathlib import Path
 import streamlit as st 
 import requests
 import ast
-
 from streamlit.web.server.websocket_headers import _get_websocket_headers
 from streamlit.source_util import _on_pages_changed, get_pages
 
@@ -20,6 +19,7 @@ def main_page():
 	<h2 style="color:tomato;text-align:center;">Identifying Potential Fraud </h2>
 	</div>
 	"""
+	st.title("LogIn")
 
 	st.markdown(html_temp,unsafe_allow_html=True)
 
@@ -30,8 +30,8 @@ def main_page():
 	if st.button("Submit"):
 		headers = {'accept': 'application/json',}
 		data = {'grant_type': '','username': '{user_val}'.format(user_val=username),'password': '{pass_val}'.format(pass_val=password),'scope': '','client_id': '' ,'client_secret': '',}
-		# response = requests.post("http://api:8001/token", headers=headers, data=data)
-		response = requests.post('http://127.0.0.1:8000/token', headers=headers, data=data)
+		response = requests.post("http://api:8001/token", headers=headers, data=data)
+		# response = requests.post('http://127.0.0.1:8000/token', headers=headers, data=data)
 		string_response = response.content.decode("utf-8") 
 
 		dict_response = ast.literal_eval(string_response)
