@@ -251,9 +251,9 @@ def predict(data : creditCardFraudDetection,current_user: User = Depends(get_cur
 
     predictions = rf.predict(features)
     if predictions == 1:
-        return {"predictions":"Fraudulent"}
+        return {"predictions":"Alert!!! The given transaction seems fraudulent. Check with the higher authority for further process"}
     elif predictions == 0:
-        return {"predictions":"Not Fraudulent"}
+        return {"predictions":"Relax! It's not a  Fraudulent Transaction"}
 
 # uvicorn model-as-a-service:app --reload
 
